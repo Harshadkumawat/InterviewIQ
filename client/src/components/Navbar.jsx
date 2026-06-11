@@ -6,7 +6,6 @@ import { HiOutlineLogout } from "react-icons/hi";
 import { FaUserAstronaut } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { setUserData } from "../features/auth/authSlice";
-
 import AuthModel from "./AuthModel";
 import { logoutUser } from "../features/auth/authService";
 
@@ -20,7 +19,7 @@ function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await logoutUser(); // 👈
+      await logoutUser();
       dispatch(setUserData(null));
       setShowCreditPopup(false);
       setShowUserPopup(false);
@@ -49,87 +48,132 @@ function Navbar() {
   };
 
   return (
-    <div className="bg-[#f3f3f3] flex justify-center px-4 pt-6">
+    <nav className="sticky top-0 z-50 bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">
       <motion.div
-        initial={{ opacity: 0, y: -40 }}
+        initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="w-full max-w-6xl bg-white rounded-[24px] shadow-sm border border-gray-200 px-8 py-4 flex justify-between items-center relative"
+        className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between"
       >
-        <div className="flex items-center gap-3 cursor-pointer">
-          <div className="bg-black text-white p-2 rounded-lg">
-            <BsRobot size={18} />
+        {/* Logo */}
+        <div
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={() => navigate("/")}
+        >
+          <div className="w-7 h-7 bg-indigo-600 text-white rounded-lg flex items-center justify-center">
+            <BsRobot size={15} />
           </div>
-          <h1 className="font-semibold hidden md:block text-lg">
-            InterviewIQ.AI
-          </h1>
+          <span className="font-medium text-zinc-900 dark:text-white hidden md:block">
+            InterviewIQ<span className="text-indigo-500">.AI</span>
+          </span>
         </div>
 
-        <div className="flex items-center gap-6 relative">
-          {/* Credits */}
+        {/* Right side */}
+        <div className="flex items-center gap-3 relative">
+          {/* Credits pill */}
           <div className="relative">
             <button
-              onClick={handleCreditClick} // 👈
-              className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full text-md hover:bg-gray-200 transition"
+              onClick={handleCreditClick}
+              className="flex items-center gap-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
             >
-              <BsCoin size={20} />
-              {userData?.credits || 0}
+              <BsCoin size={16} className="text-indigo-500" />
+              {userData?.credits || 0} credits
             </button>
 
             {showCreditPopup && (
-              <div className="absolute right-[-50px] mt-3 w-64 bg-white shadow-xl border border-gray-200 rounded-xl p-5 z-50">
-                <p className="text-sm text-gray-600 mb-4">
-                  Need more credits to continue interviews?
+              <motion.div
+                initial={{ opacity: 0, y: 6, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.15 }}
+                className="absolute right-0 mt-2 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl p-5 shadow-lg z-50"
+              >
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">
+                  Your balance
+                </p>
+                <p className="text-2xl font-medium text-zinc-900 dark:text-white mb-1">
+                  {userData?.credits || 0}
+                  <span className="text-sm font-normal text-zinc-500 dark:text-zinc-400 ml-1">
+                    credits
+                  </span>
+                </p>
+                <p className="text-xs text-zinc-400 dark:text-zinc-500 mb-4">
+                  Need more to continue practicing?
                 </p>
                 <button
-                  onClick={() => navigate("/pricing")}
-                  className="w-full bg-black text-white py-2 rounded-lg text-sm"
+                  onClick={() => {
+                    navigate("/pricing");
+                    setShowCreditPopup(false);
+                  }}
+                  className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg text-sm font-medium transition-colors"
                 >
                   Buy more credits
                 </button>
-              </div>
+              </motion.div>
             )}
           </div>
 
-          {/* User */}
+          {/* User avatar */}
           <div className="relative">
             <button
-              onClick={handleUserClick} // 👈
-              className="w-9 h-9 bg-black text-white rounded-full flex items-center justify-center font-semibold"
+              onClick={handleUserClick}
+              className="w-9 h-9 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg flex items-center justify-center text-sm font-medium transition-colors"
             >
               {userData?.name ? (
                 userData.name.slice(0, 1).toUpperCase()
               ) : (
-                <FaUserAstronaut size={16} />
+                <FaUserAstronaut size={15} />
               )}
             </button>
 
             {showUserPopup && (
-              <div className="absolute right-0 mt-3 w-48 bg-white shadow-xl border border-gray-200 rounded-xl p-4 z-50">
-                <p className="text-md text-blue-500 font-medium mb-1">
-                  {userData?.name}
-                </p>
+              <motion.div
+                initial={{ opacity: 0, y: 6, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.15 }}
+                className="absolute right-0 mt-2 w-52 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl p-4 shadow-lg z-50"
+              >
+                {/* User info */}
+                <div className="flex items-center gap-3 mb-3 pb-3 border-b border-zinc-100 dark:border-zinc-800">
+                  <div className="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center text-sm font-medium flex-shrink-0">
+                    {userData?.name?.slice(0, 1).toUpperCase() || (
+                      <FaUserAstronaut size={13} />
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-zinc-900 dark:text-white truncate">
+                      {userData?.name}
+                    </p>
+                    <p className="text-xs text-zinc-400 dark:text-zinc-500 truncate">
+                      {userData?.email}
+                    </p>
+                  </div>
+                </div>
+
                 <button
-                  onClick={() => navigate("/history")}
-                  className="w-full text-left text-sm py-2 hover:text-black text-gray-600"
+                  onClick={() => {
+                    navigate("/history");
+                    setShowUserPopup(false);
+                  }}
+                  className="w-full text-left text-sm py-2 px-2 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-colors"
                 >
-                  InterView History
+                  Interview History
                 </button>
+
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left text-sm py-2 flex items-center gap-2 text-red-500"
+                  className="w-full text-left text-sm py-2 px-2 rounded-lg flex items-center gap-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition-colors mt-1"
                 >
-                  <HiOutlineLogout size={16} />
+                  <HiOutlineLogout size={15} />
                   Logout
                 </button>
-              </div>
+              </motion.div>
             )}
           </div>
         </div>
       </motion.div>
 
       {showAuth && <AuthModel onClose={() => setShowAuth(false)} />}
-    </div>
+    </nav>
   );
 }
 

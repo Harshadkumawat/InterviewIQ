@@ -1,9 +1,7 @@
 import React from "react";
 import { BsRobot } from "react-icons/bs";
-import { IoSparkles } from "react-icons/io5";
 import { FcGoogle } from "react-icons/fc";
 import { motion } from "motion/react";
-
 import { auth, provider } from "../utils/firebase";
 import { useDispatch } from "react-redux";
 import { googleSignIn } from "../features/auth/authService";
@@ -17,7 +15,6 @@ function Auth({ isModel = false }) {
     try {
       const response = await signInWithPopup(auth, provider);
       const { displayName: name, email } = response.user;
-
       const data = await googleSignIn({ name, email });
       dispatch(setUserData(data));
     } catch (error) {
@@ -26,52 +23,69 @@ function Auth({ isModel = false }) {
     }
   };
 
-  return (
-    <div
-      className={`w-full ${
-        isModel
-          ? "py-4"
-          : "min-h-screen bg-[#f3f3f3] flex items-center justify-center px-6 py-20"
-      }`}
+  const inner = (
+    <motion.div
+      initial={{ opacity: 0, y: isModel ? 0 : -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className={`w-full ${isModel ? "p-8" : "max-w-sm p-10 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm"}`}
     >
-      <motion.div
-        initial={{ opacity: 0, y: -40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.05 }}
-        className={`w-full ${
-          isModel ? "max-w-md p-8 rounded-3xl" : "max-w-lg p-12 rounded-[32px]"
-        } bg-white shadow-2xl border border-gray-200`}
-      >
-        <div className="flex items-center justify-center gap-3 mb-6">
-          <div className="bg-black text-white p-2 rounded-lg">
-            <BsRobot size={18} />
-          </div>
-          <h2 className="font-semibold text-lg">InterviewIQ.AI</h2>
+      {/* Logo */}
+      <div className="flex items-center justify-center gap-2 mb-8">
+        <div className="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center">
+          <BsRobot size={16} />
         </div>
+        <span className="font-medium text-zinc-900 dark:text-white">
+          InterviewIQ<span className="text-indigo-500">.AI</span>
+        </span>
+      </div>
 
-        <h1 className="text-2xl md:text-3xl font-semibold text-center leading-snug mb-4">
-          Continue with
-          <span className="bg-green-100 text-green-600 px-3 py-1 rounded-full inline-flex items-center gap-2">
-            <IoSparkles size={16} />
-            AI Smart Interview
-          </span>
-        </h1>
+      {/* Headline */}
+      <h1 className="text-2xl font-medium text-zinc-900 dark:text-white text-center leading-snug mb-3">
+        Welcome back
+      </h1>
+      <p className="text-sm text-zinc-500 dark:text-zinc-400 text-center leading-relaxed mb-8">
+        Sign in to start AI-powered mock interviews, track your progress, and
+        unlock detailed performance insights.
+      </p>
 
-        <p className="text-gray-500 text-center text-sm md:text-base leading-relaxed mb-8">
-          Sign in to start AI-powered mock interviews, track your progress, and
-          unlock detailed performance insights.
-        </p>
+      {/* Google button */}
+      <motion.button
+        onClick={handleGoogleAuth}
+        whileHover={{ scale: 1.01 }}
+        whileTap={{ scale: 0.98 }}
+        className="w-full flex items-center justify-center gap-3 py-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
+      >
+        <FcGoogle size={18} />
+        Continue with Google
+      </motion.button>
 
-        <motion.button
-          onClick={handleGoogleAuth}
-          whileHover={{ opacity: 0.9, scale: 1.03 }}
-          whileTap={{ opacity: 1, scale: 0.98 }}
-          className="w-full flex items-center justify-center gap-3 py-3 bg-black text-white rounded-full shadow-md"
+      {/* Fine print */}
+      <p className="text-xs text-zinc-400 dark:text-zinc-600 text-center mt-5">
+        By continuing, you agree to our{" "}
+        <a
+          href="#"
+          className="underline hover:text-zinc-600 dark:hover:text-zinc-400"
         >
-          <FcGoogle size={20} />
-          Continue with Google
-        </motion.button>
-      </motion.div>
+          Terms
+        </a>{" "}
+        and{" "}
+        <a
+          href="#"
+          className="underline hover:text-zinc-600 dark:hover:text-zinc-400"
+        >
+          Privacy Policy
+        </a>
+        .
+      </p>
+    </motion.div>
+  );
+
+  if (isModel) return inner;
+
+  return (
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center px-6 py-20">
+      {inner}
     </div>
   );
 }
